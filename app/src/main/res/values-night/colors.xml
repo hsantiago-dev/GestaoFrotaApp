@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme - Design System M3 (padrão do app) -->
+    <color name="primary">#90CAF9</color>
+    <color name="on_primary">#003C8F</color>
+    <color name="primary_container">#1E3A5F</color>
+    <color name="on_primary_container">#BBDEFB</color>
+    <color name="secondary">#B0BEC5</color>
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    <color name="surface_variant">#2C2C2C</color>
+    <color name="on_surface">#E0E0E0</color>
+    <color name="on_surface_variant">#9E9E9E</color>
+    <color name="error">#CF6679</color>
+    <color name="outline">#444444</color>
+</resources>
