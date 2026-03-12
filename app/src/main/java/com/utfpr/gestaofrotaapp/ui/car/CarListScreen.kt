@@ -67,6 +67,10 @@ fun CarListScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(Unit) {
+        viewModel.loadCars()
+    }
+
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is CarListUiState.Error -> {

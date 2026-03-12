@@ -30,10 +30,6 @@ class CarListViewModel(
     private val _uiState = MutableStateFlow<CarListUiState>(CarListUiState.Loading)
     val uiState: StateFlow<CarListUiState> = _uiState.asStateFlow()
 
-    init {
-        loadCars()
-    }
-
     fun loadCars() {
         viewModelScope.launch {
             _uiState.value = CarListUiState.Loading
