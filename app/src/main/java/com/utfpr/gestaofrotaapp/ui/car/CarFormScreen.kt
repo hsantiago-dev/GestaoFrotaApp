@@ -90,11 +90,12 @@ import java.util.Locale
 fun CarFormScreen(
     modifier: Modifier = Modifier,
     initialCar: Car? = null,
+    carIdForEdit: String? = null,
     onBack: () -> Unit,
     onSaved: (Car) -> Unit = {},
     viewModel: CarFormViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-        key = initialCar?.id ?: "new",
-        factory = CarFormViewModelFactory(initialCar)
+        key = carIdForEdit ?: initialCar?.id ?: "new",
+        factory = CarFormViewModelFactory(initialCar = initialCar, carIdForEdit = carIdForEdit)
     )
 ) {
     val state by viewModel.state.collectAsState()
@@ -102,8 +103,8 @@ fun CarFormScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(initialCar) {
-        if (initialCar == null) {
+    LaunchedEffect(initialCar, carIdForEdit) {
+        if (initialCar == null && carIdForEdit == null) {
             viewModel.resetIfNew()
         }
     }
@@ -224,14 +225,26 @@ fun CarFormScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            if (state.isLoadingCar) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
             ImagePickerSection(
                 imageUri = state.imageUri,
                 imageUrl = state.imageUrl,
@@ -299,6 +312,8 @@ fun CarFormScreen(
                     Text("Salvando...")
                 } else {
                     Text("Salvar")
+                }
+            }
                 }
             }
         }

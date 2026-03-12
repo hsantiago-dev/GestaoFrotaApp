@@ -24,19 +24,19 @@ data class CarFormState(
     val imageUri: Uri? = null,
     val place: Place = Place(lat = -23.5505, long = -46.6333),
     val isSaving: Boolean = false,
+    val isLoadingCar: Boolean = false,
     val error: String? = null,
     val savedCar: Car? = null
 )
 
 class CarFormViewModel(
     private val repository: CarRepository = CarRepository(),
-    initialCar: Car? = null
+    initialCar: Car? = null,
+    carIdForEdit: String? = null
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
-        if (initialCar == null) {
-            CarFormState()
-        } else {
+        if (initialCar != null) {
             CarFormState(
                 isEdit = true,
                 id = initialCar.id,
@@ -46,8 +46,40 @@ class CarFormViewModel(
                 imageUrl = initialCar.imageUrl,
                 place = initialCar.place
             )
+        } else if (carIdForEdit != null) {
+            CarFormState(isEdit = true, id = carIdForEdit, isLoadingCar = true)
+        } else {
+            CarFormState()
         }
     )
+
+    init {
+        val carId = carIdForEdit
+        if (carId != null) {
+            viewModelScope.launch {
+                repository.getCarById(carId)
+                    .onSuccess { car ->
+                        _state.update {
+                            it.copy(
+                                id = car.id,
+                                name = car.name,
+                                licence = car.licence,
+                                year = car.year,
+                                imageUrl = car.imageUrl,
+                                place = car.place,
+                                isLoadingCar = false
+                            )
+                        }
+                    }
+                    .onFailure { e ->
+                        val msg = e.message ?: "Erro ao carregar carro"
+                        _state.update {
+                            it.copy(isLoadingCar = false, error = msg)
+                        }
+                    }
+            }
+        }
+    }
     val state: StateFlow<CarFormState> = _state.asStateFlow()
 
     fun onNameChange(value: String) = _state.update { it.copy(name = value, error = null) }
@@ -138,9 +170,12 @@ class CarFormViewModel(
     }
 }
 
-class CarFormViewModelFactory(private val initialCar: Car?) : ViewModelProvider.Factory {
+class CarFormViewModelFactory(
+    private val initialCar: Car? = null,
+    private val carIdForEdit: String? = null
+) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        CarFormViewModel(initialCar = initialCar) as T
+        CarFormViewModel(initialCar = initialCar, carIdForEdit = carIdForEdit) as T
 }
 
