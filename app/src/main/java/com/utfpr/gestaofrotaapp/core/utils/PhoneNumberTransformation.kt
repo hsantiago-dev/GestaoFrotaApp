@@ -36,13 +36,13 @@ object PhoneNumberTransformation : VisualTransformation {
         val sb = StringBuilder("+")
         digits.forEachIndexed { index, c ->
             when (index) {
-                0, 1 -> sb.append(c)           // +55
+                0, 1 -> sb.append(c)              // +55
                 2 -> { sb.append(' '); sb.append(c) }
-                3 -> sb.append(c)               // XX (DDD)
+                3 -> sb.append(c)                // XX (DDD)
                 4 -> { sb.append(' '); sb.append(c) }
-                5, 6, 7, 8, 9 -> sb.append(c)  // XXXXX
-                10 -> { sb.append('-'); sb.append(c) }
-                11, 12 -> sb.append(c)         // XXXX
+                5, 6, 7, 8 -> sb.append(c)       // XXXX (parte inicial do número local)
+                9 -> { sb.append('-'); sb.append(c) }
+                10, 11, 12 -> sb.append(c)       // XXXX (parte final do número local)
             }
         }
         return sb.toString()
