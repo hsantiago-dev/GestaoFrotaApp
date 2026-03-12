@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "870609549283",
+    "project_id": "gestao-frota-app-cdbec",
+    "storage_bucket": "gestao-frota-app-cdbec.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870609549283:android:24016ba02b12dab37e12d6",
+        "android_client_info": {
+          "package_name": "com.utfpr.gestaofrotaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "ADICIONE_KEY_AQUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
