@@ -45,6 +45,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -56,7 +60,7 @@ import coil.request.ImageRequest
 import com.utfpr.gestaofrotaapp.data.model.Car
 import com.utfpr.gestaofrotaapp.ui.theme.GestaoFrotaAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun CarListScreen(
     modifier: Modifier = Modifier,
@@ -66,6 +70,11 @@ fun CarListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val isRefreshing = uiState is CarListUiState.Loading
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = { viewModel.loadCars() }
+    )
 
     LaunchedEffect(Unit) {
         viewModel.loadCars()
@@ -118,6 +127,7 @@ fun CarListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .pullRefresh(pullRefreshState)
         ) {
             when (val state = uiState) {
                 is CarListUiState.Loading -> CarListShimmer()
@@ -138,6 +148,12 @@ fun CarListScreen(
                     )
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }

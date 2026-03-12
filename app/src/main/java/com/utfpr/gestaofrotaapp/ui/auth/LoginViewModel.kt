@@ -40,9 +40,6 @@ class LoginViewModel(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
-    /**
-     * Envia o código SMS para o número atual. [activity] é necessário para reCAPTCHA.
-     */
     fun sendCode(activity: Activity) {
         val digits = _uiState.value.phoneNumber.trim()
         if (digits.isBlank()) {
@@ -102,9 +99,6 @@ class LoginViewModel(
         }
     }
 
-    /**
-     * Verifica o código SMS e finaliza o login.
-     */
     fun verifyCode() {
         val id = _uiState.value.verificationId
         val code = _uiState.value.code.trim()

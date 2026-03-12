@@ -12,21 +12,12 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 
-/**
- * Fonte de dados para Firebase Authentication.
- * Login por telefone (SMS) e logout.
- */
 class AuthDataSource(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) {
 
     val currentUser get() = auth.currentUser
 
-    /**
-     * Envia o código SMS para o número informado.
-     * [activity] é necessário para o fluxo de reCAPTCHA quando aplicável.
-     * Retorna [Result] com [VerificationResult] (verificationId) em sucesso.
-     */
     fun sendPhoneVerificationCode(
         activity: Activity,
         phoneNumber: String,
@@ -57,10 +48,6 @@ class AuthDataSource(
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    /**
-     * Conclui o login com o código SMS informado.
-     * Usar [verificationId] retornado em [sendPhoneVerificationCode] ou credencial de [onVerificationCompleted].
-     */
     suspend fun signInWithPhoneCredential(
         verificationId: String,
         code: String
@@ -70,24 +57,15 @@ class AuthDataSource(
         Unit
     }
 
-    /**
-     * Login direto quando Firebase retorna credencial em [onVerificationCompleted] (ex.: teste em emulador).
-     */
     suspend fun signInWithCredential(credential: PhoneAuthCredential): Result<Unit> = runCatching {
         auth.signInWithCredential(credential).await()
         Unit
     }
 
-    /**
-     * Encerra a sessão do usuário atual.
-     */
     fun logout() {
         auth.signOut()
     }
 
-    /**
-     * Fluxo do usuário atual (para observar mudanças de auth na UI).
-     */
     fun authStateFlow(): Flow<com.google.firebase.auth.FirebaseUser?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser) }
         auth.addAuthStateListener(listener)
@@ -95,9 +73,6 @@ class AuthDataSource(
     }
 }
 
-/**
- * Resultado do envio do código: ou [verificationId] para o usuário digitar o código, ou [credential] quando já autenticado (ex.: teste).
- */
 data class VerificationResult(
     val verificationId: String? = null,
     val credential: PhoneAuthCredential? = null

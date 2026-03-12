@@ -5,11 +5,6 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 
-/**
- * Formata apenas dígitos como "+55 XX XXXXX-XXXX" (Brasil).
- * O valor no estado deve conter só dígitos (máx. 13: 55 + DDD + 9 dígitos).
- * Ao enviar para a API, use [formatPhoneForApi] para obter "+5511912345678".
- */
 object PhoneNumberTransformation : VisualTransformation {
 
     private const val MAX_DIGITS = 13
@@ -54,10 +49,6 @@ object PhoneNumberTransformation : VisualTransformation {
     }
 }
 
-/**
- * Retorna o número no formato E.164 para Firebase (ex: "+5511912345678").
- * Espera [digitsOnly] com apenas dígitos (ex: "5511912345678").
- */
 fun formatPhoneForApi(digitsOnly: String): String {
     val digits = digitsOnly.filter { it.isDigit() }
     return if (digits.isNotEmpty()) "+$digits" else ""

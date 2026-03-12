@@ -11,9 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * Estado da UI do detalhe do carro.
- */
 sealed class CarDetailUiState {
     data object Loading : CarDetailUiState()
     data class Success(val car: Car) : CarDetailUiState()
@@ -21,10 +18,6 @@ sealed class CarDetailUiState {
     data object Deleted : CarDetailUiState()
 }
 
-/**
- * ViewModel da tela de detalhe do carro.
- * Consome GET /car/:id e DELETE /car/:id via CarRepository.
- */
 class CarDetailViewModel(
     private val carId: String,
     private val repository: CarRepository = CarRepository()
@@ -70,10 +63,6 @@ class CarDetailViewModel(
         }
     }
 
-    /**
-     * Restaura o carro após exclusão (desfazer). Chama POST /car com os dados anteriores.
-     * Suspend para garantir que a API conclua antes de qualquer navegação.
-     */
     suspend fun undoDelete() {
         val car = lastDeletedCar ?: return
         lastDeletedCar = null

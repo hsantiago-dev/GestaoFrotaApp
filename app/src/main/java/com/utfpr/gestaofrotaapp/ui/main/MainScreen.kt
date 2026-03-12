@@ -15,7 +15,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.utfpr.gestaofrotaapp.data.model.Car
 import com.utfpr.gestaofrotaapp.ui.car.CarDetailScreen
+import com.utfpr.gestaofrotaapp.ui.car.CarFormScreen
 import com.utfpr.gestaofrotaapp.ui.car.CarListScreen
+
+private sealed interface ScreenState {
+    data object List : ScreenState
+    data class Detail(val carId: String) : ScreenState
+    data class Form(val initialCar: Car?) : ScreenState
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,35 +31,47 @@ fun MainScreen(
     onAddCarClick: () -> Unit = {},
     onEditCarClick: (Car) -> Unit = {}
 ) {
-    var selectedCarId by remember { mutableStateOf<String?>(null) }
+    var screen by remember { mutableStateOf<ScreenState>(ScreenState.List) }
 
-    if (selectedCarId == null) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Gestão de Frota") },
-                    actions = {
-                        TextButton(onClick = onLogout) {
-                            Text("Sair")
+    when (val current = screen) {
+        is ScreenState.List -> {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text("Gestão de Frota") },
+                        actions = {
+                            TextButton(onClick = onLogout) {
+                                Text("Sair")
+                            }
                         }
-                    }
+                    )
+                }
+            ) { paddingValues ->
+                CarListScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    onAddCarClick = { screen = ScreenState.Form(initialCar = null) },
+                    onCarClick = { car -> screen = ScreenState.Detail(carId = car.id ?: car.licence) }
                 )
             }
-        ) { paddingValues ->
-            CarListScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                onAddCarClick = onAddCarClick,
-                onCarClick = { car -> selectedCarId = car.id ?: car.licence }
+        }
+
+        is ScreenState.Detail -> {
+            CarDetailScreen(
+                carId = current.carId,
+                onBack = { screen = ScreenState.List },
+                onEditClick = { car -> screen = ScreenState.Form(initialCar = car) },
+                onDeleted = { screen = ScreenState.List }
             )
         }
-    } else {
-        CarDetailScreen(
-            carId = selectedCarId!!,
-            onBack = { selectedCarId = null },
-            onEditClick = onEditCarClick,
-            onDeleted = { selectedCarId = null }
-        )
+
+        is ScreenState.Form -> {
+            CarFormScreen(
+                initialCar = current.initialCar,
+                onBack = { screen = ScreenState.List },
+                onSaved = { screen = ScreenState.List }
+            )
+        }
     }
 }

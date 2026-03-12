@@ -8,10 +8,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-/**
- * Cliente Retrofit configurado para a API de carros.
- * Base URL em [BuildConfig.API_BASE_URL] (default: http://10.0.2.2:3000/ para emulador).
- */
 object RetrofitClient {
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {

@@ -10,10 +10,6 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-/**
- * Interface Retrofit para a API REST de carros.
- * Base URL deve terminar com / (ex: http://10.0.2.2:3000/).
- */
 interface CarApiService {
 
     @GET("car")
@@ -32,9 +28,6 @@ interface CarApiService {
     suspend fun deleteCar(@Path("id") id: String): Response<DeleteMessageResponse>
 }
 
-/**
- * Resposta do DELETE /car/:id — { "message": "..." }.
- */
 data class DeleteMessageResponse(
     val message: String? = null
 )

@@ -2,7 +2,6 @@ package com.utfpr.gestaofrotaapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Dark theme (padrão do app) - Design System M3
 val PrimaryDark = Color(0xFF90CAF9)
 val OnPrimaryDark = Color(0xFF003C8F)
 val PrimaryContainerDark = Color(0xFF1E3A5F)
@@ -16,7 +15,6 @@ val OnSurfaceVariantDark = Color(0xFF9E9E9E)
 val ErrorDark = Color(0xFFCF6679)
 val OutlineDark = Color(0xFF444444)
 
-// Light theme - Design System M3
 val PrimaryLight = Color(0xFF1565C0)
 val OnPrimaryLight = Color(0xFFFFFFFF)
 val PrimaryContainerLight = Color(0xFFBBDEFB)

@@ -12,9 +12,6 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.util.UUID
 
-/**
- * Repositório que centraliza o acesso à API de carros e ao Firebase Storage.
- */
 class CarRepository(
     private val api: CarApiService = RetrofitClient.createService(CarApiService::class.java),
     private val storageDataSource: StorageDataSource = StorageDataSource()
@@ -55,10 +52,6 @@ class CarRepository(
         }.mapFailureToApiException()
     }
 
-    /**
-     * Faz upload da imagem para o Firebase Storage e em seguida cria o carro na API com a URL retornada.
-     * Útil para o formulário de criação (Fase 8).
-     */
     suspend fun createCarWithImage(
         imageUri: Uri,
         year: String,
@@ -82,6 +75,21 @@ class CarRepository(
             } else {
                 throw ApiException(response.code(), response.message())
             }
+        }.mapFailureToApiException()
+    }
+
+    suspend fun updateCarWithImage(
+        id: String,
+        imageUri: Uri,
+        year: String,
+        name: String,
+        licence: String,
+        place: Place
+    ): Result<Car> = withContext(Dispatchers.IO) {
+        runCatching {
+            val imageUrl = storageDataSource.uploadImageAndGetUrl(imageUri).getOrThrow()
+            val car = Car(id = id, imageUrl = imageUrl, year = year, name = name, licence = licence, place = place)
+            updateCar(id, car).getOrThrow()
         }.mapFailureToApiException()
     }
 
@@ -109,9 +117,6 @@ class CarRepository(
     }
 }
 
-/**
- * Erro retornado pela API (código HTTP e mensagem).
- */
 class ApiException(
     val code: Int,
     override val message: String

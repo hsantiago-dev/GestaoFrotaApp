@@ -10,19 +10,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * Estado da UI da lista de carros.
- */
 sealed class CarListUiState {
     data object Loading : CarListUiState()
     data class Success(val cars: List<Car>) : CarListUiState()
     data class Error(val message: String) : CarListUiState()
 }
 
-/**
- * ViewModel da tela de lista de carros.
- * Consome GET /car via CarRepository.
- */
 class CarListViewModel(
     private val repository: CarRepository = CarRepository()
 ) : ViewModel() {
